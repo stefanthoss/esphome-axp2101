@@ -3,7 +3,8 @@ ESPHome AXP192 Component
 
 This custom component it to implement support for the AXP192 for both the M5Stick-C, and the M5Stack Core2, building on top of airy10's code. 
 
-*Update - 17th April 2023*
+*Update - 17th April 2023*  
+
 @paulchilton has added support for the M5Tough, which requires a different register configuration for the M5Tough ILI9342C display. Other changes include a fix to stop the log being spammed with brightness values continually, these are only logged on change. Also the M5Tough needs resetting once the axp192 registers are set for the display to properly initialise so this version sets up the axp and then resets the ESP32 automatically.
 
 ## Installation
