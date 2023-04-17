@@ -1,0 +1,143 @@
+esphome:
+  name: m5tough
+
+esp32:
+  board: m5stack-core2
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+# Enable over the air programming
+ota:
+  
+# Enable WiFi connection
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Include the required components for this device
+external_components:
+  - source: github://paulchilton/esphome-axp192
+    components: [axp192]
+
+# SPI bus
+spi:
+  clk_pin: GPIO18
+  mosi_pin: GPIO23
+  miso_pin: GPIO38
+
+# I2C bus
+i2c:
+  - id: bus_a
+    sda: GPIO21
+    scl: GPIO22
+
+# Define sensors
+sensor:
+  - platform: axp192
+    model: M5TOUGH
+    address: 0x34
+    i2c_id: bus_a
+    update_interval: 3s
+    brightness: 75%
+
+  - platform: uptime
+    name: "Uptime"
+
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+    id: wifi_strength
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      id: ip_address
+
+# M5 Tough has a built in speaker which can be used by home assistant as a media player
+media_player:
+  - platform: i2s_audio
+    name: M5TOUGH I2S Media Player
+    dac_type: external
+    i2s_lrclk_pin: GPIO0
+    i2s_dout_pin: GPIO2
+    i2s_bclk_pin: GPIO12
+    mode: stereo
+
+# Setup a simple input that triggers when the screen is touched anywhere
+binary_sensor:
+  - platform: gpio
+    id: touchscreen_pressed
+    name: Touch Screen Pressed
+    pin:
+      number: 39
+
+    on_press:
+      then:
+      - logger.log: "Screen was pressed"
+
+      # Also, send an event to home assistant api to indicate someone has pressed the screen. 
+      - homeassistant.event:
+          event: esphome.screen_pressed
+          data:
+            message: Toughscreen was pressed
+
+# Fonts used on the display
+font:
+  - file: "gfonts://Roboto"
+    id: title_font
+    size: 38
+  - file: "gfonts://Roboto"
+    id: large_font
+    size: 42
+  - file: "gfonts://Roboto"
+    id: mid_font
+    size: 28
+  - file: "gfonts://Roboto"
+    id: small_font
+    size: 18
+
+# Colours used on the display
+color:
+  - id: color_white
+    red: 100%
+    green: 100%
+    blue: 100%
+  - id: color_grey
+    red: 30%
+    green: 30%
+    blue: 40%
+  - id: color_red
+    red: 100%
+    green: 3%
+    blue: 5%
+
+# Display definition with a simple header and footer showing WiFi connection details
+display:
+  - platform: ili9341
+    # 320x240
+    model: M5STACK
+    cs_pin: GPIO5
+    dc_pin: GPIO15
+    lambda: |-
+      // Header
+      it.print(160, 0, id(title_font), id(color_white), TextAlign::TOP_CENTER, "Hello World");
+      it.line(0, 50, it.get_width(), 50, id(color_grey));
+      
+      
+      // Footer
+      it.line(0, 215, it.get_width(), 215, id(color_grey));
+      if(isnan(id(wifi_strength).state) == 0){
+        it.printf(240, 220, id(small_font), id(color_white), TextAlign::TOP_LEFT, "%.1fdB", id(wifi_strength).state);
+      }
+      else
+      {
+        it.printf(160, 220, id(small_font), id(color_red), TextAlign::TOP_CENTER, "Disconnected");
+      }
+
+      it.printf(10, 220, id(small_font), id(color_white), TextAlign::TOP_LEFT, "%s", id(ip_address).state.c_str());

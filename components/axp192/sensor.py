@@ -13,6 +13,7 @@ AXP192Model = axp192_ns.enum("AXP192Model")
 MODELS = {
     "M5CORE2": AXP192Model.AXP192_M5CORE2,
     "M5STICKC": AXP192Model.AXP192_M5STICKC,
+    "M5TOUGH": AXP192Model.AXP192_M5TOUGH,
 }
 
 AXP192_MODEL = cv.enum(MODELS, upper=True, space="_")

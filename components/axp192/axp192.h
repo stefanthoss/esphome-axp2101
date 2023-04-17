@@ -11,6 +11,7 @@ namespace axp192 {
 enum AXP192Model {
   AXP192_M5STICKC = 0,
   AXP192_M5CORE2,
+  AXP192_M5TOUGH,
 };
 
 #define SLEEP_MSEC(us) (((uint64_t)us) * 1000L)
@@ -40,6 +41,9 @@ public:
   float get_setup_priority() const override;
   void update() override;
 
+private:
+    static std::string GetStartupReason();
+  
 protected:
     sensor::Sensor *batterylevel_sensor_;
     float brightness_{1.0f};
