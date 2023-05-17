@@ -43,7 +43,7 @@ public:
 
 private:
     static std::string GetStartupReason();
-  
+
 protected:
     sensor::Sensor *batterylevel_sensor_;
     float brightness_{1.0f};
@@ -53,28 +53,28 @@ protected:
     /** M5 Stick Values
      * LDO2: Display backlight
      * LDO3: Display Control
-     * RTC: Don't set GPIO1 as LDO  
+     * RTC: Don't set GPIO1 as LDO
      * DCDC1: Main rail. When not set the controller shuts down.
      * DCDC3: Use unknown
      ***********************
      * M5Stack Core2 Values
      * LDO2: ILI9342C PWR (Display)
      * LD03: Vibration Motor
-     */ 
+     */
 
     void  begin(bool disableLDO2 = false, bool disableLDO3 = false, bool disableRTC = false, bool disableDCDC1 = false, bool disableDCDC3 = false);
     void  UpdateBrightness();
     bool  GetBatState();
     uint8_t  GetBatData();
-  
+
     void  EnableCoulombcounter(void);
     void  DisableCoulombcounter(void);
     void  StopCoulombcounter(void);
     void  ClearCoulombcounter(void);
     uint32_t GetCoulombchargeData(void);
     uint32_t GetCoulombdischargeData(void);
-    float GetCoulombData(void); 
-    
+    float GetCoulombData(void);
+
     uint16_t GetVbatData(void) __attribute__((deprecated));
     uint16_t GetIchargeData(void) __attribute__((deprecated));
     uint16_t GetIdischargeData(void) __attribute__((deprecated));
@@ -106,15 +106,15 @@ protected:
     float GetAPSVoltage();
     float GetBatCoulombInput();
     float GetBatCoulombOut();
-    uint8_t GetWarningLevel(void);	
+    uint8_t GetWarningLevel(void);
     void SetCoulombClear();
     void SetLDO2( bool State );
     void SetLDO3( bool State );
     void SetAdcState(bool State);
-    
+
     void PowerOff();
 
-    
+
     void Write1Byte( uint8_t Addr ,  uint8_t Data );
     uint8_t Read8bit( uint8_t Addr );
     uint16_t Read12Bit( uint8_t Addr);
@@ -123,7 +123,7 @@ protected:
     uint32_t Read24bit( uint8_t Addr );
     uint32_t Read32bit( uint8_t Addr );
     void ReadBuff( uint8_t Addr , uint8_t Size , uint8_t *Buff );
-}; 
+};
 
 }
 }

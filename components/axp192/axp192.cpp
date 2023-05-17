@@ -7,17 +7,19 @@ namespace esphome {
 namespace axp192 {
 
 static const char *TAG = "axp192.sensor";
-void AXP192Component::setup() 
+void AXP192Component::setup()
 {
   switch (this->model_) {
     case AXP192_M5STICKC:
     {
         begin(false, false, false, false, false);
+        break;
     }
     case AXP192_M5CORE2:
     {
         // disable LDO3 Vibration
         begin(false, true, false, false, false);
+        break;
     }
     case AXP192_M5TOUGH:
     {
@@ -30,7 +32,8 @@ void AXP192Component::setup()
 
             // Reboot the ESP with the axp initialised
             ESP.restart();
-    }
+        }
+        break;
     }
   }
 }
@@ -63,32 +66,35 @@ void AXP192Component::update() {
 
 
 void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC, bool disableDCDC1, bool disableDCDC3)
-{  
+{
   switch (this->model_) {
     case AXP192_M5STICKC:
     {
         // Set LDO2 & LDO3(TFT_LED & TFT) 3.0V
-        Write1Byte(0x28, 0xcc);	
+        Write1Byte(0x28, 0xcc);
+        break;
     }
     case AXP192_M5CORE2:
     {
         // Set DCDC3 (TFT_LED & TFT) 3.0V
-        Write1Byte(0x27, 0xcc);	
+        Write1Byte(0x27, 0xcc);
         // Set LDO2 & LDO3(TFT_LED & TFT) 3.0V
-        Write1Byte(0x28, 0xcc);	
+        Write1Byte(0x28, 0xcc);
+        break;
     }
     case AXP192_M5TOUGH:
     {
         // Set DCDC3 (TFT_LED & TFT) 3.0V
-        Write1Byte(0x27, 0xcc);	
+        Write1Byte(0x27, 0xcc);
         // Set LDO2 & LDO3(TFT_LED & TFT) 3.0V
-        Write1Byte(0x28, 0xcc);	
+        Write1Byte(0x28, 0xcc);
+        break;
     }
   }
 
     // Set ADC sample rate to 200hz
     Write1Byte(0x84, 0b11110010);
-    
+
     // Set ADC to All Enable
     Write1Byte(0x82, 0xff);
 
@@ -101,15 +107,15 @@ void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC,
     if(disableLDO2) buf &= ~(1<<2);
     if(disableDCDC3) buf &= ~(1<<1);
     if(disableDCDC1) buf &= ~(1<<0);
-    Write1Byte(0x12, buf);	
-    
+    Write1Byte(0x12, buf);
+
     // 128ms power on, 4s power off
     Write1Byte(0x36, 0x0C);
 
     if(!disableRTC)
     {
         // Set RTC voltage to 3.3V
-        Write1Byte(0x91, 0xF0);	
+        Write1Byte(0x91, 0xF0);
 
         // Set GPIO0 to LDO
         Write1Byte(0x90, 0x02);
@@ -120,13 +126,13 @@ void AXP192Component::begin(bool disableLDO2, bool disableLDO3, bool disableRTC,
 
     // Set temperature protection
     Write1Byte(0x39, 0xfc);
-    
-    // Enable RTC BAT charge 
+
+    // Enable RTC BAT charge
     Write1Byte(0x35, 0xa2 & (disableRTC ? 0x7F : 0xFF));
-    
+
     // Enable bat detection
     Write1Byte(0x32, 0x46);
-	
+
 }
 
 void AXP192Component::Write1Byte( uint8_t Addr ,  uint8_t Data )
@@ -216,8 +222,8 @@ void AXP192Component::UpdateBrightness()
     const uint8_t c_min = 7;
     const uint8_t c_max = 12;
     auto ubri = c_min + static_cast<uint8_t>(brightness_ * (c_max - c_min));
-    
-    if (ubri > c_max) 
+
+    if (ubri > c_max)
     {
         ubri = c_max;
     }
@@ -226,22 +232,25 @@ void AXP192Component::UpdateBrightness()
       {
         uint8_t buf = Read8bit( 0x28 );
         Write1Byte( 0x28 , ((buf & 0x0f) | (ubri << 4)) );
+        break;
       }
       case AXP192_M5CORE2:
       {
         uint8_t buf = Read8bit( 0x27 );
-	Write1Byte( 0x27 , ((buf & 0x80) | (ubri << 3)) );
+        Write1Byte( 0x27 , ((buf & 0x80) | (ubri << 3)) );
+        break;
       }
       case AXP192_M5TOUGH:
       {
         uint8_t buf = Read8bit( 0x27 );
-	Write1Byte( 0x27 , ((buf & 0x80) | (ubri << 3)) );
+        Write1Byte( 0x27 , ((buf & 0x80) | (ubri << 3)) );
+        break;
       }
     }
 }
 
 bool AXP192Component::GetBatState()
-{	
+{
     if( Read8bit(0x01) | 0x20 )
         return true;
     else
@@ -253,7 +262,7 @@ uint8_t AXP192Component::GetBatData()
     return Read8bit(0x75);
 }
 //---------coulombcounter_from_here---------
-//enable: void EnableCoulombcounter(void); 
+//enable: void EnableCoulombcounter(void);
 //disable: void DisableCOulombcounter(void);
 //stop: void StopCoulombcounter(void);
 //clear: void ClearCoulombcounter(void);
@@ -408,7 +417,7 @@ void AXP192Component::SetSleep(void)
 
 // -- sleep
 void AXP192Component::DeepSleep(uint64_t time_in_us)
-{ 
+{
     SetSleep();
     esp_sleep_enable_ext0_wakeup((gpio_num_t)37, 0 /* LOW */);
     if (time_in_us > 0)
@@ -439,7 +448,7 @@ void AXP192Component::LightSleep(uint64_t time_in_us)
 uint8_t AXP192Component::GetBtnPress()
 {
     uint8_t state = Read8bit(0x46);
-    if(state) 
+    if(state)
     {
         Write1Byte( 0x46 , 0x03 );
     }
@@ -608,7 +617,7 @@ std::string AXP192Component::GetStartupReason() {
       return "ESP_SLEEP_WAKEUP_UART";
     return std::string{"WAKEUP_UNKNOWN_REASON"};
   }
-	
+
   if (reset_reason == ESP_RST_UNKNOWN)
     return "ESP_RST_UNKNOWN";
   if (reset_reason == ESP_RST_POWERON)
@@ -629,7 +638,7 @@ std::string AXP192Component::GetStartupReason() {
     return "ESP_RST_SDIO";
   return std::string{"RESET_UNKNOWN_REASON"};
 }
-	
+
 }
 }
 
