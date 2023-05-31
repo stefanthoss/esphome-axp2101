@@ -21,7 +21,7 @@ This component adds a new model configuration to the AXP192 sensor which determi
 
 ```yaml
 external_components:
-  - source: github://paulchilton/esphome-axp192
+  - source: github://martydingo/esphome-axp192
     components: [axp192]
 ```
 
