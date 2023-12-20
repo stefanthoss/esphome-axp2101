@@ -1,17 +1,28 @@
-#ifndef __AXP192_H__
-#define __AXP192_H__
+#ifndef __AXP2101_H__
+#define __AXP2101_H__
 
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
 #include "esphome/components/i2c/i2c.h"
 
-namespace esphome {
-namespace axp192 {
+#define XPOWERS_CHIP_AXP2101
+#include "XPowersLib.h"
 
-enum AXP192Model {
-  AXP192_M5STICKC = 0,
-  AXP192_M5CORE2,
-  AXP192_M5TOUGH,
+bool  pmu_flag = 0;
+XPowersPMU PMU;
+
+void setFlag(void)
+{
+    pmu_flag = true;
+}
+
+namespace esphome {
+namespace axp2101 {
+
+enum AXP2101Model {
+  AXP2101_M5STICKC = 0,
+  AXP2101_M5CORE2,
+  AXP2101_M5TOUGH,
 };
 
 #define SLEEP_MSEC(us) (((uint64_t)us) * 1000L)
@@ -28,11 +39,11 @@ enum AXP192Model {
 #define CURRENT_630MA  (0b0110)
 #define CURRENT_700MA  (0b0111)
 
-class AXP192Component : public PollingComponent, public i2c::I2CDevice {
+class AXP2101Component : public PollingComponent, public i2c::I2CDevice {
 public:
   void set_batterylevel_sensor(sensor::Sensor *batterylevel_sensor) { batterylevel_sensor_ = batterylevel_sensor; }
   void set_brightness(float brightness) { brightness_ = brightness; }
-  void set_model(AXP192Model model) { this->model_ = model; }
+  void set_model(AXP2101Model model) { this->model_ = model; }
 
   // ========== INTERNAL METHODS ==========
   // (In most use cases you won't need these)
@@ -48,7 +59,7 @@ protected:
     sensor::Sensor *batterylevel_sensor_;
     float brightness_{1.0f};
     float curr_brightness_{-1.0f};
-    AXP192Model model_;
+    AXP2101Model model_;
 
     /** M5 Stick Values
      * LDO2: Display backlight
@@ -62,7 +73,6 @@ protected:
      * LD03: Vibration Motor
      */
 
-    void  begin(bool disableLDO2 = false, bool disableLDO3 = false, bool disableRTC = false, bool disableDCDC1 = false, bool disableDCDC3 = false);
     void  UpdateBrightness();
     bool  GetBatState();
     uint8_t  GetBatData();
@@ -94,13 +104,12 @@ protected:
 
     // void SetChargeVoltage( uint8_t );
     void  SetChargeCurrent( uint8_t );
-    float GetBatVoltage();
     float GetBatCurrent();
     float GetVinVoltage();
     float GetVinCurrent();
     float GetVBusVoltage();
     float GetVBusCurrent();
-    float GetTempInAXP192();
+    float GetTempInAXP2101();
     float GetBatPower();
     float GetBatChargeCurrent();
     float GetAPSVoltage();

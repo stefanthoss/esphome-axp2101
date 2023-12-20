@@ -1,5 +1,6 @@
-# ESPHome AXP192 Component
-ESPHome AXP192 Component
+# ESPHome AXP2101 Component
+
+*Work in progress*
 
 This custom component it to implement support for the AXP192 for both the M5Stick-C, and the M5Stack Core2, building on top of airy10's code. 
 

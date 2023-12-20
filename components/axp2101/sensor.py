@@ -6,21 +6,19 @@ from esphome.const import CONF_ID,\
 
 DEPENDENCIES = ['i2c']
 
-axp192_ns = cg.esphome_ns.namespace('axp192')
-AXP192Component = axp192_ns.class_('AXP192Component', cg.PollingComponent, i2c.I2CDevice)
-AXP192Model = axp192_ns.enum("AXP192Model")
+axp2101_ns = cg.esphome_ns.namespace('axp2101')
+AXP2101Component = axp2101_ns.class_('AXP2101Component', cg.PollingComponent, i2c.I2CDevice)
+AXP2101Model = axp2101_ns.enum("AXP2101Model")
 
 MODELS = {
-    "M5CORE2": AXP192Model.AXP192_M5CORE2,
-    "M5STICKC": AXP192Model.AXP192_M5STICKC,
-    "M5TOUGH": AXP192Model.AXP192_M5TOUGH,
+    "M5CORE2": AXP2101Model.AXP2101_M5CORE2,
 }
 
-AXP192_MODEL = cv.enum(MODELS, upper=True, space="_")
+AXP2101_MODEL = cv.enum(MODELS, upper=True, space="_")
 
 CONFIG_SCHEMA = cv.Schema({
-    cv.GenerateID(): cv.declare_id(AXP192Component),
-    cv.Required(CONF_MODEL): AXP192_MODEL,
+    cv.GenerateID(): cv.declare_id(AXP2101Component),
+    cv.Required(CONF_MODEL): AXP2101_MODEL,
     cv.Optional(CONF_BATTERY_LEVEL):
         sensor.sensor_schema(
             unit_of_measurement=UNIT_PERCENT,
@@ -36,7 +34,10 @@ def to_code(config):
     yield cg.register_component(var, config)
     yield i2c.register_i2c_device(var, config)
 
+    # cg.add_library("lewisxhe/XPowersLib", "0.2.1")
+
     cg.add(var.set_model(config[CONF_MODEL]))
+
     if CONF_BATTERY_LEVEL in config:
         conf = config[CONF_BATTERY_LEVEL]
         sens = yield sensor.new_sensor(conf)
