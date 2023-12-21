@@ -9,12 +9,6 @@ namespace axp2101 {
 static const char *TAG = "axp2101.sensor";
 void AXP2101Component::setup()
 {
-    bool result = PMU.begin(Wire, AXP2101_SLAVE_ADDRESS, i2c_sda, i2c_scl);
-
-    if (result == false) {
-        Serial.println("PMU is not online..."); while (1)delay(50);
-    }
-
     Serial.printf("getID:0x%x\n", PMU.getChipID());
 
     // Set the minimum common working voltage of the PMU VBUS input,
@@ -290,13 +284,15 @@ void AXP2101Component::update() {
 
     if (this->batterylevel_sensor_ != nullptr) {
       float vbat = PMU.getBattVoltage();
+
       // The battery percentage may be inaccurate at first use, the PMU will automatically
       // learn the battery curve and will automatically calibrate the battery percentage
       // after a charge and discharge cycle
+      float batterylevel;
       if (PMU.isBatteryConnect()) {
-        float batterylevel = PMU.getBatteryPercent();
+        batterylevel = PMU.getBatteryPercent();
       } else {
-        float batterylevel = 100.0 * ((vbat - 3.0) / (4.1 - 3.0));
+        batterylevel = 100.0 * ((vbat - 3.0) / (4.1 - 3.0));
       }
 
       ESP_LOGD(TAG, "Got Battery Level=%f (%f)", batterylevel, vbat);

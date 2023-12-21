@@ -7,7 +7,14 @@
 
 #define XPOWERS_CHIP_AXP2101
 #include "XPowersLib.h"
+
+bool  pmu_flag = 0;
 XPowersPMU PMU;
+
+void setFlag(void)
+{
+    pmu_flag = true;
+}
 
 namespace esphome {
 namespace axp2101 {
