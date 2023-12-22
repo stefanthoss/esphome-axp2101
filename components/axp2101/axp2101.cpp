@@ -300,6 +300,7 @@ void AXP2101Component::dump_config() {
   ESP_LOGCONFIG(TAG, "AXP2101:");
   LOG_I2C_DEVICE(this);
   LOG_SENSOR("  ", "Battery Level", this->batterylevel_sensor_);
+  LOG_BINARY_SENSOR("  ", "Battery Charging", this->batterycharging_bsensor_);
 }
 
 float AXP2101Component::get_setup_priority() const { return setup_priority::DATA; }
@@ -324,6 +325,12 @@ void AXP2101Component::update() {
         batterylevel = 100;
       }
       this->batterylevel_sensor_->publish_state(batterylevel);
+    }
+
+    if (this->batterycharging_bsensor_ != nullptr) {
+      bool vcharging = PMU.isCharging();
+
+      this->batterycharging_bsensor_->publish_state(vcharging);
     }
 
     UpdateBrightness();

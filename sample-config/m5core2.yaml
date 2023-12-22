@@ -57,6 +57,9 @@ sensor:
     battery_level:
       name: "Battery Level"
       id: battery_level
+    battery_charging:
+      name: "Battery Charging"
+      id: battery_charging
 
   - platform: mpu6886
     address: 0x68

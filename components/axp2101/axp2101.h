@@ -3,6 +3,7 @@
 
 #include "esphome/core/component.h"
 #include "esphome/components/sensor/sensor.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/i2c/i2c.h"
 
 #define XPOWERS_CHIP_AXP2101
@@ -32,6 +33,7 @@ enum AXP2101Model {
 class AXP2101Component : public PollingComponent, public i2c::I2CDevice {
 public:
   void set_batterylevel_sensor(sensor::Sensor *batterylevel_sensor) { batterylevel_sensor_ = batterylevel_sensor; }
+  void set_batterycharging_bsensor(binary_sensor::BinarySensor *batterycharging_bsensor) { batterycharging_bsensor_ = batterycharging_bsensor; }
   void set_brightness(float brightness) { brightness_ = brightness; }
   void set_model(AXP2101Model model) { this->model_ = model; }
 
@@ -47,6 +49,7 @@ private:
 
 protected:
     sensor::Sensor *batterylevel_sensor_;
+    binary_sensor::BinarySensor *batterycharging_bsensor_;
     float brightness_{1.0f};
     float curr_brightness_{-1.0f};
     AXP2101Model model_;
