@@ -3,6 +3,30 @@
 #include "esp_sleep.h"
 #include <Esp.h>
 
+#ifndef CONFIG_PMU_SDA
+#define CONFIG_PMU_SDA 21
+#endif
+
+#ifndef CONFIG_PMU_SCL
+#define CONFIG_PMU_SCL 22
+#endif
+
+#ifndef CONFIG_PMU_IRQ
+#define CONFIG_PMU_IRQ 35
+#endif
+
+bool  pmu_flag = 0;
+XPowersPMU PMU;
+
+const uint8_t i2c_sda = CONFIG_PMU_SDA;
+const uint8_t i2c_scl = CONFIG_PMU_SCL;
+const uint8_t pmu_irq_pin = CONFIG_PMU_IRQ;
+
+void setFlag(void)
+{
+    pmu_flag = true;
+}
+
 namespace esphome {
 namespace axp2101 {
 
@@ -71,7 +95,7 @@ void AXP2101Component::setup()
 
     //ALDO3 IMAX=300mA
     //500~3500mV, 100mV/step,31steps
-    PMU.setALDO3Voltage(3300);
+    // PMU.setALDO3Voltage(3300);
 
     //ALDO4 IMAX=300mA
     //500~3500mV, 100mV/step,31steps
@@ -91,11 +115,11 @@ void AXP2101Component::setup()
 
     //DLDO1 IMAX=300mA
     //500~3400mV, 100mV/step,29steps
-    PMU.setDLDO1Voltage(3300);
+    // PMU.setDLDO1Voltage(3300);
 
     //DLDO2 IMAX=300mA
     //500~1400mV, 50mV/step,2steps
-    PMU.setDLDO2Voltage(3300);
+    // PMU.setDLDO2Voltage(3300);
 
 
     // PMU.enableDC1();
@@ -105,13 +129,13 @@ void AXP2101Component::setup()
     PMU.enableDC5();
     PMU.enableALDO1();
     PMU.enableALDO2();
-    PMU.enableALDO3();
+    // PMU.enableALDO3(); // This is the speaker
     PMU.enableALDO4();
     PMU.enableBLDO1();
     PMU.enableBLDO2();
     PMU.enableCPUSLDO();
-    PMU.enableDLDO1();
-    PMU.enableDLDO2();
+    // PMU.enableDLDO1(); // This is the vibration motor
+    // PMU.enableDLDO2();
 
 
     Serial.println("DCDC=======================================================================");
@@ -398,19 +422,7 @@ void AXP2101Component::UpdateBrightness()
         ubri = c_max;
     }
     switch (this->model_) {
-      case AXP2101_M5STICKC:
-      {
-        uint8_t buf = Read8bit( 0x28 );
-        Write1Byte( 0x28 , ((buf & 0x0f) | (ubri << 4)) );
-        break;
-      }
       case AXP2101_M5CORE2:
-      {
-        uint8_t buf = Read8bit( 0x27 );
-        Write1Byte( 0x27 , ((buf & 0x80) | (ubri << 3)) );
-        break;
-      }
-      case AXP2101_M5TOUGH:
       {
         uint8_t buf = Read8bit( 0x27 );
         Write1Byte( 0x27 , ((buf & 0x80) | (ubri << 3)) );

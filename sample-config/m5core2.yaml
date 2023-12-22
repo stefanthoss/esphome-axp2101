@@ -1,38 +1,52 @@
 esphome:
   name: m5stack-core2
-  platform: ESP32
-  board: m5stack-core-esp32
-  
-  # Use this to hardlink the component if it is not discovered
-  # includes:
-  #  - /config/custom_components/axp192/axp192.h
+  friendly_name: M5Stack Core2
 
-wifi:
-  ssid: "SSID"
-  password: "PASSPHRASE"
+esp32:
+  board: m5stack-core2
+  framework:
+    type: arduino
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "XXX"
-    password: "XXX"
-
-substitutions:
-  devicename: ${devicename}
-  upper_devicename: ${upper_devicename} 
-
-captive_portal:
+external_components:
+  - source: github://stefanthoss/esphome-axp2101
+    components: [ axp2101 ]
 
 # Enable logging
 logger:
 
 # Enable Home Assistant API
 api:
+  encryption:
+    key: "XXX"
 
 ota:
+  password: "XXX"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "XXX"
+    password: "XXX"
+
+captive_portal:
 
 web_server:
+  port: 80
 
-# axp2101 power management - must be present to initialize TFT power on
+spi:
+  clk_pin: GPIO18
+  mosi_pin: GPIO23
+  miso_pin: GPIO38
+
+i2c:
+  - id: bus_a
+    sda: GPIO21
+    scl: GPIO22
+    scan: True
+
 sensor:
   - platform: axp2101
     model: M5CORE2
@@ -42,33 +56,65 @@ sensor:
     brightness: 75%
     battery_level:
       name: "Battery Level"
+      id: battery_level
 
-  - platform: wifi_signal
-    name: WiFi Signal
+  - platform: mpu6886
+    address: 0x68
+    accel_x:
+      name: "Accel X"
+    accel_y:
+      name: "Accel Y"
+    accel_z:
+      name: "Accel z"
+    gyro_x:
+      name: "Gyro X"
+    gyro_y:
+      name: "Gyro Y"
+    gyro_z:
+      name: "Gyro z"
+    temperature:
+      name: "Temperature"
 
-  - platform: uptime
-    name: Uptime Sensor
+touchscreen:
+  - platform: ft63x6
+    i2c_id: bus_a
+    on_touch:
+      - logger.log:
+          format: Touch %d at (%d, %d)
+          args: [touch.id, touch.x, touch.y]
 
-spi:
-  clk_pin: GPIO18
-  mosi_pin: GPIO23
-  miso_pin: GPIO38
-  
-i2c:
-   - id: bus_a
-     sda: GPIO21
-     scl: GPIO22
-     scan: True
+binary_sensor:
+  - platform: touchscreen
+    name: Left Touch Button
+    x_min: 0
+    x_max: 106
+    y_min: 120
+    y_max: 140
+
+  - platform: touchscreen
+    name: Middle Touch Button
+    x_min: 107
+    x_max: 213
+    y_min: 120
+    y_max: 140
+
+  - platform: touchscreen
+    name: Right Touch Button
+    x_min: 214
+    x_max: 320
+    y_min: 120
+    y_max: 140
 
 font:
-  - file: 'fonts/arial.ttf'
-    id: font1
-    size: 8
+  - file: "gfonts://Roboto"
+    id: roboto
+    size: 24
 
 display:
   - platform: ili9xxx
-    model: ILI9342
+    model: M5STACK
+    dimensions: 320x240
     cs_pin: GPIO5
     dc_pin: GPIO15
     lambda: |-
-      it.print(80, 0, id(my_font), id(my_red), TextAlign::TOP_CENTER, "Hello World!");
+      it.print(0, 0, id(roboto), "Hello World");

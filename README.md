@@ -1,12 +1,8 @@
 # ESPHome AXP2101 Component
 
-*Work in progress*
+This custom component implements AXP2101 support for the M5Stack Core2 V1.1, building on top of https://github.com/martydingo/esphome-axp192. The Core2 uses an AXP192 while the Core2 V1.1 uses an AXP2101.
 
-This custom component it to implement support for the AXP192 for both the M5Stick-C, and the M5Stack Core2, building on top of airy10's code. 
-
-*Update - 17th April 2023*  
-
-@paulchilton has added support for the M5Tough, which requires a different register configuration for the M5Tough ILI9342C display. Other changes include a fix to stop the log being spammed with brightness values continually, these are only logged on change. Also the M5Tough needs resetting once the axp192 registers are set for the display to properly initialise so this version sets up the axp and then resets the ESP32 automatically.
+*This component does not offer full functionality yet, it only covers part of the AXP2101 features and is not fully tested.*  
 
 ## Installation
 
@@ -16,67 +12,45 @@ Copy the components to a custom_components directory next to your .yaml configur
 
 Sample configurations are found in the `/sample-config` folder.
 
-This component adds a new model configuration to the AXP192 sensor which determines which registers are needed for each device. Available models are `model: M5CORE2`, `model: M5STICKC` and `model: M5TOUGH`.
+This component adds a new model configuration to the AXP2101 sensor which determines which registers are needed for each device. The only available model is `model: M5CORE2`.
 
-### Include axp192 component
+### Include AXP2101 Component
 
 ```yaml
 external_components:
-  - source: github://martydingo/esphome-axp192
-    components: [axp192]
+  - source: github://stefanthoss/esphome-axp2101
+    components: [ axp2101 ]
 ```
 
-### M5Stick-C
+### M5Stack Core2 V1.1
 
 ```yaml
 sensor:
-  - platform: axp192
-    model: M5STICKC
-    address: 0x34
-    i2c_id: bus_a
-    update_interval: 30s
-    battery_level:
-      name: "M5Stick Battery Level"
-      id: "m5stick_batterylevel"
-```
-
-### M5Stack Core2
-
-```yaml
-sensor:
-  - platform: axp192
+  - platform: axp2101
     model: M5CORE2
     address: 0x34
     i2c_id: bus_a
     update_interval: 30s
+    brightness: 75%
     battery_level:
-      name: "${upper_devicename} Battery Level"
-      id: "${devicename}_batterylevel"
+      name: "Battery Level"
+      id: battery_level
 ```
 
-### M5Tough
+The display component required for the M5Stack Core2 V1.1 is as follows:
 
 ```yaml
-sensor:
-  - platform: axp192
-    model: M5Tough
-    address: 0x34
-    i2c_id: bus_a
-    update_interval: 30s
-    battery_level:
-      name: "${upper_devicename} Battery Level"
-      id: "${devicename}_batterylevel"
-```
+font:
+  - file: "gfonts://Roboto"
+    id: roboto
+    size: 24
 
-The display component required for the M5Tough is as follows:
-
-```yaml
 display:
-  - platform: ili9341
-    # 320x240
+  - platform: ili9xxx
     model: M5STACK
+    dimensions: 320x240
     cs_pin: GPIO5
     dc_pin: GPIO15
     lambda: |-
-      it.print(160, 0, id(title_font), id(color_white), TextAlign::TOP_CENTER, "Hello World");
+      it.print(0, 0, id(roboto), "Hello World");
 ```

@@ -8,21 +8,11 @@
 #define XPOWERS_CHIP_AXP2101
 #include "XPowersLib.h"
 
-bool  pmu_flag = 0;
-XPowersPMU PMU;
-
-void setFlag(void)
-{
-    pmu_flag = true;
-}
-
 namespace esphome {
 namespace axp2101 {
 
 enum AXP2101Model {
-  AXP2101_M5STICKC = 0,
   AXP2101_M5CORE2,
-  AXP2101_M5TOUGH,
 };
 
 #define SLEEP_MSEC(us) (((uint64_t)us) * 1000L)
@@ -61,14 +51,7 @@ protected:
     float curr_brightness_{-1.0f};
     AXP2101Model model_;
 
-    /** M5 Stick Values
-     * LDO2: Display backlight
-     * LDO3: Display Control
-     * RTC: Don't set GPIO1 as LDO
-     * DCDC1: Main rail. When not set the controller shuts down.
-     * DCDC3: Use unknown
-     ***********************
-     * M5Stack Core2 Values
+    /** M5Stack Core2 Values
      * LDO2: ILI9342C PWR (Display)
      * LD03: Vibration Motor
      */
