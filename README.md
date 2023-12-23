@@ -32,6 +32,8 @@ sensor:
     i2c_id: bus_a
     update_interval: 30s
     brightness: 75%
+    battery_voltage:
+      name: "Battery Voltage"
     battery_level:
       name: "Battery Level"
     battery_charging:

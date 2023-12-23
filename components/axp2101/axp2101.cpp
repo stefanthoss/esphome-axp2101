@@ -1,6 +1,6 @@
 #include "axp2101.h"
-#include "esphome/core/log.h"
 #include "esp_sleep.h"
+#include "esphome/core/log.h"
 #include <Esp.h>
 
 #ifndef CONFIG_PMU_SDA
@@ -299,6 +299,7 @@ void AXP2101Component::setup()
 void AXP2101Component::dump_config() {
   ESP_LOGCONFIG(TAG, "AXP2101:");
   LOG_I2C_DEVICE(this);
+  LOG_SENSOR("  ", "Battery Voltage", this->batteryvoltage_sensor_);
   LOG_SENSOR("  ", "Battery Level", this->batterylevel_sensor_);
   LOG_BINARY_SENSOR("  ", "Battery Charging", this->batterycharging_bsensor_);
 }
@@ -310,6 +311,7 @@ void AXP2101Component::update() {
     if (this->batterylevel_sensor_ != nullptr) {
       float vbat = PMU.getBattVoltage();
       ESP_LOGD(TAG, "Got Battery Voltage=%f", vbat);
+      this->batteryvoltage_sensor_->publish_state(vbat / 1000.);
 
       // The battery percentage may be inaccurate at first use, the PMU will automatically
       // learn the battery curve and will automatically calibrate the battery percentage

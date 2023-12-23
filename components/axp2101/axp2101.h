@@ -1,10 +1,10 @@
 #ifndef __AXP2101_H__
 #define __AXP2101_H__
 
-#include "esphome/core/component.h"
-#include "esphome/components/sensor/sensor.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
 #include "esphome/components/i2c/i2c.h"
+#include "esphome/components/sensor/sensor.h"
+#include "esphome/core/component.h"
 
 #define XPOWERS_CHIP_AXP2101
 #include "XPowersLib.h"
@@ -32,6 +32,7 @@ enum AXP2101Model {
 
 class AXP2101Component : public PollingComponent, public i2c::I2CDevice {
 public:
+  void set_batteryvoltage_sensor(sensor::Sensor *batteryvoltage_sensor) { batteryvoltage_sensor_ = batteryvoltage_sensor; }
   void set_batterylevel_sensor(sensor::Sensor *batterylevel_sensor) { batterylevel_sensor_ = batterylevel_sensor; }
   void set_batterycharging_bsensor(binary_sensor::BinarySensor *batterycharging_bsensor) { batterycharging_bsensor_ = batterycharging_bsensor; }
   void set_brightness(float brightness) { brightness_ = brightness; }
@@ -48,6 +49,7 @@ private:
     static std::string GetStartupReason();
 
 protected:
+    sensor::Sensor *batteryvoltage_sensor_;
     sensor::Sensor *batterylevel_sensor_;
     binary_sensor::BinarySensor *batterycharging_bsensor_;
     float brightness_{1.0f};
