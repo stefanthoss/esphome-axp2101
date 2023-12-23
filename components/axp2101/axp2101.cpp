@@ -33,7 +33,7 @@ namespace axp2101 {
 static const char *TAG = "axp2101.sensor";
 void AXP2101Component::setup()
 {
-    Serial.printf("getID:0x%x\n", PMU.getChipID());
+    ESP_LOGD(TAG, "getID:0x%x", PMU.getChipID());
 
     // Set the minimum common working voltage of the PMU VBUS input,
     // below this value will turn off the PMU
@@ -46,13 +46,13 @@ void AXP2101Component::setup()
 
     // Get the VSYS shutdown voltage
     uint16_t vol = PMU.getSysPowerDownVoltage();
-    Serial.printf("->  getSysPowerDownVoltage:%u\n", vol);
+    ESP_LOGD(TAG, "->  getSysPowerDownVoltage:%u", vol);
 
     // Set VSY off voltage as 2600mV , Adjustment range 2600mV ~ 3300mV
     PMU.setSysPowerDownVoltage(2600);
 
     vol = PMU.getSysPowerDownVoltage();
-    Serial.printf("->  getSysPowerDownVoltage:%u\n", vol);
+    ESP_LOGD(TAG, "->  getSysPowerDownVoltage:%u", vol);
 
 
     // DC1 IMAX=2A
@@ -232,7 +232,7 @@ void AXP2101Component::setup()
     // without the battery temperature detection function, otherwise it will cause abnormal charging
     PMU.disableTSPinMeasure();
 
-    // PMU.enableTemperatureMeasure();
+    PMU.enableTemperatureMeasure();
 
     // Enable internal ADC detection
     PMU.enableBattDetection();
@@ -309,6 +309,7 @@ void AXP2101Component::update() {
 
     if (this->batterylevel_sensor_ != nullptr) {
       float vbat = PMU.getBattVoltage();
+      ESP_LOGD(TAG, "Got Battery Voltage=%f", vbat);
 
       // The battery percentage may be inaccurate at first use, the PMU will automatically
       // learn the battery curve and will automatically calibrate the battery percentage
@@ -320,7 +321,7 @@ void AXP2101Component::update() {
         batterylevel = 100.0 * ((vbat - 3.0) / (4.1 - 3.0));
       }
 
-      ESP_LOGD(TAG, "Got Battery Level=%f (%f)", batterylevel, vbat);
+      ESP_LOGD(TAG, "Got Battery Level=%f", batterylevel);
       if (batterylevel > 100.) {
         batterylevel = 100;
       }
@@ -330,6 +331,7 @@ void AXP2101Component::update() {
     if (this->batterycharging_bsensor_ != nullptr) {
       bool vcharging = PMU.isCharging();
 
+      ESP_LOGD(TAG, "Got Battery Charging=%s", vcharging ? "true" : "false");
       this->batterycharging_bsensor_->publish_state(vcharging);
     }
 
