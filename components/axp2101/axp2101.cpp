@@ -31,9 +31,10 @@ namespace esphome {
 namespace axp2101 {
 
 static const char *TAG = "axp2101.sensor";
+
 void AXP2101Component::setup()
 {
-    ESP_LOGD(TAG, "getID:0x%x", PMU.getChipID());
+    ESP_LOGCONFIG(TAG, "getID:0x%x", PMU.getChipID());
 
     // Set the minimum common working voltage of the PMU VBUS input,
     // below this value will turn off the PMU
@@ -46,44 +47,44 @@ void AXP2101Component::setup()
 
     // Get the VSYS shutdown voltage
     uint16_t vol = PMU.getSysPowerDownVoltage();
-    ESP_LOGD(TAG, "->  getSysPowerDownVoltage:%u", vol);
+    ESP_LOGCONFIG(TAG, "->  getSysPowerDownVoltage:%u", vol);
 
     // Set VSY off voltage as 2600mV , Adjustment range 2600mV ~ 3300mV
     PMU.setSysPowerDownVoltage(2600);
 
     vol = PMU.getSysPowerDownVoltage();
-    ESP_LOGD(TAG, "->  getSysPowerDownVoltage:%u", vol);
+    ESP_LOGCONFIG(TAG, "->  getSysPowerDownVoltage:%u", vol);
 
 
     // DC1 IMAX=2A
     // 1500~3400mV,100mV/step,20steps
     PMU.setDC1Voltage(3300);
-    Serial.printf("DC1  : %s   Voltage:%u mV \n",  PMU.isEnableDC1()  ? "+" : "-", PMU.getDC1Voltage());
+    ESP_LOGCONFIG(TAG, "DC1  : %s   Voltage:%u mV",  PMU.isEnableDC1()  ? "+" : "-", PMU.getDC1Voltage());
 
     // DC2 IMAX=2A
     // 500~1200mV  10mV/step,71steps
     // 1220~1540mV 20mV/step,17steps
     PMU.setDC2Voltage(1000);
-    Serial.printf("DC2  : %s   Voltage:%u mV \n",  PMU.isEnableDC2()  ? "+" : "-", PMU.getDC2Voltage());
+    ESP_LOGCONFIG(TAG, "DC2  : %s   Voltage:%u mV",  PMU.isEnableDC2()  ? "+" : "-", PMU.getDC2Voltage());
 
     // DC3 IMAX = 2A
     // 500~1200mV,10mV/step,71steps
     // 1220~1540mV,20mV/step,17steps
     // 1600~3400mV,100mV/step,19steps
     PMU.setDC3Voltage(3300);
-    Serial.printf("DC3  : %s   Voltage:%u mV \n",  PMU.isEnableDC3()  ? "+" : "-", PMU.getDC3Voltage());
+    ESP_LOGCONFIG(TAG, "DC3  : %s   Voltage:%u mV",  PMU.isEnableDC3()  ? "+" : "-", PMU.getDC3Voltage());
 
     // DCDC4 IMAX=1.5A
     // 500~1200mV,10mV/step,71steps
     // 1220~1840mV,20mV/step,32steps
     PMU.setDC4Voltage(1000);
-    Serial.printf("DC4  : %s   Voltage:%u mV \n",  PMU.isEnableDC4()  ? "+" : "-", PMU.getDC4Voltage());
+    ESP_LOGCONFIG(TAG, "DC4  : %s   Voltage:%u mV",  PMU.isEnableDC4()  ? "+" : "-", PMU.getDC4Voltage());
 
     // DC5 IMAX=2A
     // 1200mV
     // 1400~3700mV,100mV/step,24steps
     PMU.setDC5Voltage(3300);
-    Serial.printf("DC5  : %s   Voltage:%u mV \n",  PMU.isEnableDC5()  ? "+" : "-", PMU.getDC5Voltage());
+    ESP_LOGCONFIG(TAG, "DC5  : %s   Voltage:%u mV",  PMU.isEnableDC5()  ? "+" : "-", PMU.getDC5Voltage());
 
     //ALDO1 IMAX=300mA
     //500~3500mV, 100mV/step,31steps
@@ -138,39 +139,36 @@ void AXP2101Component::setup()
     // PMU.enableDLDO2();
 
 
-    Serial.println("DCDC=======================================================================");
-    Serial.printf("DC1  : %s   Voltage:%u mV \n",  PMU.isEnableDC1()  ? "+" : "-", PMU.getDC1Voltage());
-    Serial.printf("DC2  : %s   Voltage:%u mV \n",  PMU.isEnableDC2()  ? "+" : "-", PMU.getDC2Voltage());
-    Serial.printf("DC3  : %s   Voltage:%u mV \n",  PMU.isEnableDC3()  ? "+" : "-", PMU.getDC3Voltage());
-    Serial.printf("DC4  : %s   Voltage:%u mV \n",  PMU.isEnableDC4()  ? "+" : "-", PMU.getDC4Voltage());
-    Serial.printf("DC5  : %s   Voltage:%u mV \n",  PMU.isEnableDC5()  ? "+" : "-", PMU.getDC5Voltage());
-    Serial.println("ALDO=======================================================================");
-    Serial.printf("ALDO1: %s   Voltage:%u mV\n",  PMU.isEnableALDO1()  ? "+" : "-", PMU.getALDO1Voltage());
-    Serial.printf("ALDO2: %s   Voltage:%u mV\n",  PMU.isEnableALDO2()  ? "+" : "-", PMU.getALDO2Voltage());
-    Serial.printf("ALDO3: %s   Voltage:%u mV\n",  PMU.isEnableALDO3()  ? "+" : "-", PMU.getALDO3Voltage());
-    Serial.printf("ALDO4: %s   Voltage:%u mV\n",  PMU.isEnableALDO4()  ? "+" : "-", PMU.getALDO4Voltage());
-    Serial.println("BLDO=======================================================================");
-    Serial.printf("BLDO1: %s   Voltage:%u mV\n",  PMU.isEnableBLDO1()  ? "+" : "-", PMU.getBLDO1Voltage());
-    Serial.printf("BLDO2: %s   Voltage:%u mV\n",  PMU.isEnableBLDO2()  ? "+" : "-", PMU.getBLDO2Voltage());
-    Serial.println("CPUSLDO====================================================================");
-    Serial.printf("CPUSLDO: %s Voltage:%u mV\n",  PMU.isEnableCPUSLDO() ? "+" : "-", PMU.getCPUSLDOVoltage());
-    Serial.println("DLDO=======================================================================");
-    Serial.printf("DLDO1: %s   Voltage:%u mV\n",  PMU.isEnableDLDO1()  ? "+" : "-", PMU.getDLDO1Voltage());
-    Serial.printf("DLDO2: %s   Voltage:%u mV\n",  PMU.isEnableDLDO2()  ? "+" : "-", PMU.getDLDO2Voltage());
-    Serial.println("===========================================================================");
+    ESP_LOGCONFIG(TAG, "DC1  : %s   Voltage:%u mV",  PMU.isEnableDC1()  ? "+" : "-", PMU.getDC1Voltage());
+    ESP_LOGCONFIG(TAG, "DC2  : %s   Voltage:%u mV",  PMU.isEnableDC2()  ? "+" : "-", PMU.getDC2Voltage());
+    ESP_LOGCONFIG(TAG, "DC3  : %s   Voltage:%u mV",  PMU.isEnableDC3()  ? "+" : "-", PMU.getDC3Voltage());
+    ESP_LOGCONFIG(TAG, "DC4  : %s   Voltage:%u mV",  PMU.isEnableDC4()  ? "+" : "-", PMU.getDC4Voltage());
+    ESP_LOGCONFIG(TAG, "DC5  : %s   Voltage:%u mV",  PMU.isEnableDC5()  ? "+" : "-", PMU.getDC5Voltage());
+    ESP_LOGCONFIG(TAG, "ALDO1: %s   Voltage:%u mV",  PMU.isEnableALDO1()  ? "+" : "-", PMU.getALDO1Voltage());
+    ESP_LOGCONFIG(TAG, "ALDO2: %s   Voltage:%u mV",  PMU.isEnableALDO2()  ? "+" : "-", PMU.getALDO2Voltage());
+    ESP_LOGCONFIG(TAG, "ALDO3: %s   Voltage:%u mV",  PMU.isEnableALDO3()  ? "+" : "-", PMU.getALDO3Voltage());
+    ESP_LOGCONFIG(TAG, "ALDO4: %s   Voltage:%u mV",  PMU.isEnableALDO4()  ? "+" : "-", PMU.getALDO4Voltage());
+    ESP_LOGCONFIG(TAG, "BLDO1: %s   Voltage:%u mV",  PMU.isEnableBLDO1()  ? "+" : "-", PMU.getBLDO1Voltage());
+    ESP_LOGCONFIG(TAG, "BLDO2: %s   Voltage:%u mV",  PMU.isEnableBLDO2()  ? "+" : "-", PMU.getBLDO2Voltage());
+    ESP_LOGCONFIG(TAG, "CPUSLDO: %s Voltage:%u mV",  PMU.isEnableCPUSLDO() ? "+" : "-", PMU.getCPUSLDOVoltage());
+    ESP_LOGCONFIG(TAG, "DLDO1: %s   Voltage:%u mV",  PMU.isEnableDLDO1()  ? "+" : "-", PMU.getDLDO1Voltage());
+    ESP_LOGCONFIG(TAG, "DLDO2: %s   Voltage:%u mV",  PMU.isEnableDLDO2()  ? "+" : "-", PMU.getDLDO2Voltage());
 
     // Set the time of pressing the button to turn off
     PMU.setPowerKeyPressOffTime(XPOWERS_POWEROFF_4S);
     uint8_t opt = PMU.getPowerKeyPressOffTime();
-    Serial.print("PowerKeyPressOffTime:");
     switch (opt) {
-    case XPOWERS_POWEROFF_4S: Serial.println("4 Second");
+    case XPOWERS_POWEROFF_4S:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOffTime: 4 Second");
         break;
-    case XPOWERS_POWEROFF_6S: Serial.println("6 Second");
+    case XPOWERS_POWEROFF_6S:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOffTime: 6 Second");
         break;
-    case XPOWERS_POWEROFF_8S: Serial.println("8 Second");
+    case XPOWERS_POWEROFF_8S:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOffTime: 8 Second");
         break;
-    case XPOWERS_POWEROFF_10S: Serial.println("10 Second");
+    case XPOWERS_POWEROFF_10S:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOffTime: 10 Second");
         break;
     default:
         break;
@@ -178,48 +176,43 @@ void AXP2101Component::setup()
     // Set the button power-on press time
     PMU.setPowerKeyPressOnTime(XPOWERS_POWERON_128MS);
     opt = PMU.getPowerKeyPressOnTime();
-    Serial.print("PowerKeyPressOnTime:");
     switch (opt) {
-    case XPOWERS_POWERON_128MS: Serial.println("128 Ms");
+    case XPOWERS_POWERON_128MS:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOnTime: 128 Ms");
         break;
-    case XPOWERS_POWERON_512MS: Serial.println("512 Ms");
+    case XPOWERS_POWERON_512MS:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOnTime: 512 Ms");
         break;
-    case XPOWERS_POWERON_1S: Serial.println("1 Second");
+    case XPOWERS_POWERON_1S:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOnTime: 1 Second");
         break;
-    case XPOWERS_POWERON_2S: Serial.println("2 Second");
+    case XPOWERS_POWERON_2S:
+        ESP_LOGCONFIG(TAG, "PowerKeyPressOnTime: 2 Second");
         break;
     default:
         break;
     }
 
-    Serial.println("===========================================================================");
-
     bool en;
 
     // DCDC 120%(130%) high voltage turn off PMIC function
     en = PMU.getDCHighVoltagePowerDowmEn();
-    Serial.print("getDCHighVoltagePowerDowmEn:");
-    Serial.println(en ? "ENABLE" : "DISABLE");
+    ESP_LOGCONFIG(TAG, "getDCHighVoltagePowerDowmEn: %s", en ? "ENABLE" : "DISABLE");
     // DCDC1 85% low voltage turn off PMIC function
     en = PMU.getDC1LowVoltagePowerDowmEn();
-    Serial.print("getDC1LowVoltagePowerDowmEn:");
-    Serial.println(en ? "ENABLE" : "DISABLE");
+    ESP_LOGCONFIG(TAG, "getDC1LowVoltagePowerDowmEn: %s", en ? "ENABLE" : "DISABLE");
     // DCDC2 85% low voltage turn off PMIC function
     en = PMU.getDC2LowVoltagePowerDowmEn();
-    Serial.print("getDC2LowVoltagePowerDowmEn:");
-    Serial.println(en ? "ENABLE" : "DISABLE");
+    ESP_LOGCONFIG(TAG, "getDC2LowVoltagePowerDowmEn: %s", en ? "ENABLE" : "DISABLE");
     // DCDC3 85% low voltage turn off PMIC function
     en = PMU.getDC3LowVoltagePowerDowmEn();
-    Serial.print("getDC3LowVoltagePowerDowmEn:");
-    Serial.println(en ? "ENABLE" : "DISABLE");
+    ESP_LOGCONFIG(TAG, "getDC3LowVoltagePowerDowmEn: %s", en ? "ENABLE" : "DISABLE");
     // DCDC4 85% low voltage turn off PMIC function
     en = PMU.getDC4LowVoltagePowerDowmEn();
-    Serial.print("getDC4LowVoltagePowerDowmEn:");
-    Serial.println(en ? "ENABLE" : "DISABLE");
+    ESP_LOGCONFIG(TAG, "getDC4LowVoltagePowerDowmEn: %s", en ? "ENABLE" : "DISABLE");
     // DCDC5 85% low voltage turn off PMIC function
     en = PMU.getDC5LowVoltagePowerDowmEn();
-    Serial.print("getDC5LowVoltagePowerDowmEn:");
-    Serial.println(en ? "ENABLE" : "DISABLE");
+    ESP_LOGCONFIG(TAG, "getDC5LowVoltagePowerDowmEn: %s", en ? "ENABLE" : "DISABLE");
 
     // PMU.setDCHighVoltagePowerDowm(true);
     // PMU.setDC1LowVoltagePowerDowm(true);
