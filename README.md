@@ -1,6 +1,6 @@
 # ESPHome AXP2101 Component
 
-This custom component implements AXP2101 support for the M5Stack Core2 V1.1, building on top of https://github.com/martydingo/esphome-axp192 and https://github.com/lewisxhe/XPowersLib. The Core2 V1.1 uses an AXP2101 while the older Core2 uses an AXP192.
+This custom component implements AXP2101 support for the [M5Stack Core2 V1.1](https://docs.m5stack.com/en/core/Core2%20v1.1), building on top of https://github.com/martydingo/esphome-axp192 and https://github.com/lewisxhe/XPowersLib. The [Core2 V1.1](https://docs.m5stack.com/en/core/Core2%20v1.1) uses an AXP2101 while the older Core2 uses an AXP192.
 
 *This component does not offer full functionality yet, it only covers part of the AXP2101 features and is not fully tested.*  
 
